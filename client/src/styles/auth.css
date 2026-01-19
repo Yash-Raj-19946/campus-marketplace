@@ -1,0 +1,536 @@
+/* ================= AUTH PAGES ================= */
+
+.auth-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 120px;
+}
+
+.auth-card {
+  width: 420px;
+  padding: 44px;
+  border-radius: 28px;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(20px);
+  box-shadow: 0 35px 90px rgba(0, 0, 0, 0.25);
+  animation: fadeUp 0.9s ease;
+}
+
+.auth-card h2 {
+  font-size: 2rem;
+  margin-bottom: 8px;
+}
+
+.auth-card p {
+  color: #4b5563;
+  margin-bottom: 26px;
+}
+
+.auth-card input {
+  width: 100%;
+  padding: 14px 18px;
+  margin-bottom: 16px;
+  border-radius: 999px;
+  border: 1px solid #e5e7eb;
+  font-size: 0.95rem;
+}
+
+/* ================= DASHBOARD / BUY / RENT ================= */
+
+.dashboard {
+  max-width: 1200px;
+  margin: 120px auto;
+  padding: 0 20px;
+  text-align: center;
+}
+
+.page-title {
+  font-size: 2.6rem;
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+
+.page-subtitle {
+  font-size: 1rem;
+  color: #4b5563;
+  margin-bottom: 40px;
+}
+
+.empty-text {
+  color: #6b7280;
+}
+
+/* ================= PRODUCT GRID ================= */
+
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 32px;
+  margin-top: 40px;
+}
+
+/* ================= PRODUCT CARD ================= */
+
+.product-card {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 22px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.15);
+  transition: all 0.35s ease;
+}
+
+.product-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 40px 90px rgba(0, 0, 0, 0.25);
+}
+
+.product-image-wrapper {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.product-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.product-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin-top: 6px;
+}
+
+.product-price {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #4f46e5;
+}
+
+.product-type {
+  align-self: flex-start;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: white;
+}
+
+/* ================= POST PRODUCT BAR ================= */
+
+.post-product-bar {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 0.8fr 1.2fr auto;
+  gap: 16px;
+  align-items: center;
+  padding: 26px;
+  margin: 40px auto 60px;
+  max-width: 1100px;
+  border-radius: 26px;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(18px);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.18);
+}
+
+.post-input,
+.post-select {
+  padding: 14px 18px;
+  border-radius: 999px;
+  border: 1px solid #e5e7eb;
+  font-size: 0.95rem;
+}
+
+.post-select {
+  font-weight: 600;
+}
+
+.post-btn {
+  padding: 14px 32px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: white;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+}
+
+/* ================= FEEDBACK ================= */
+
+.success-text {
+  color: #16a34a;
+  font-weight: 700;
+  margin-top: 14px;
+}
+
+.error-text {
+  color: #dc2626;
+  font-weight: 700;
+  margin-top: 14px;
+}
+
+/* ================= CHAT UI ================= */
+
+.chat-page {
+  height: calc(100vh - 80px);
+  max-width: 800px;
+  margin: 90px auto 0;
+  display: flex;
+  flex-direction: column;
+  background: #f9fafb;
+  border-radius: 18px;
+  box-shadow: 0 25px 60px rgba(0,0,0,0.15);
+  overflow: hidden;
+}
+
+.chat-header {
+  padding: 16px;
+  font-weight: 700;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: white;
+  text-align: center;
+}
+
+.chat-messages {
+  flex: 1;
+  padding: 16px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.chat-bubble {
+  max-width: 70%;
+  padding: 10px 14px;
+  border-radius: 14px;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.chat-bubble.me {
+  align-self: flex-end;
+  background: #6366f1;
+  color: white;
+  border-bottom-right-radius: 4px;
+}
+
+.chat-bubble.other {
+  align-self: flex-start;
+  background: #e5e7eb;
+  color: #111827;
+  border-bottom-left-radius: 4px;
+}
+
+.chat-input-bar {
+  display: flex;
+  gap: 10px;
+  padding: 14px;
+  border-top: 1px solid #e5e7eb;
+  background: white;
+}
+
+.chat-input-bar input {
+  flex: 1;
+  padding: 12px 16px;
+  border-radius: 999px;
+  border: 1px solid #e5e7eb;
+}
+
+.chat-input-bar button {
+  padding: 12px 24px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: white;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+}
+
+/* ================= CHAT LIST ================= */
+
+.chat-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 30px;
+}
+
+.chat-list-item {
+  padding: 16px 20px;
+  background: rgba(255,255,255,0.9);
+  border-radius: 16px;
+  cursor: pointer;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+  transition: all 0.3s ease;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.chat-list-item:hover {
+  transform: translateY(-4px);
+}
+
+.chat-menu-btn {
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.rename-modal {
+  position: fixed;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.rename-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+/* ================= REQUEST BUTTON ================= */
+
+.request-btn {
+  width: 100%;
+  padding: 14px;
+  margin-top: 12px;
+  background: linear-gradient(135deg, #6a5cff, #8b7bff);
+  color: #fff;
+  border: none;
+  border-radius: 14px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.request-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(106, 92, 255, 0.35);
+}
+
+.request-btn:active {
+  transform: scale(0.98);
+}
+
+/* ================= ANIMATIONS ================= */
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(35px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+/* ---------- BUTTON SYSTEM ---------- */
+
+.btn-primary {
+  background: linear-gradient(135deg, #7c3aed, #9333ea);
+  color: white;
+  padding: 10px 18px;
+  border-radius: 10px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-confirm {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: white;
+  padding: 10px 16px;
+  border-radius: 10px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-cancel {
+  background: #fee2e2;
+  color: #991b1b;
+  padding: 10px 16px;
+  border-radius: 10px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-chat {
+  background: #f3f4f6;
+  color: #111827;
+  padding: 10px 16px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+/* ---------- PRODUCT CARD ---------- */
+
+.buyer-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.confirm-row {
+  display: flex;
+  gap: 10px;
+}
+
+/* ---------- REQUESTS ---------- */
+
+.requests-wrapper {
+  margin-top: 30px;
+}
+
+.request-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.request-card {
+  background: rgba(255, 255, 255, 0.85);
+  padding: 18px;
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+}
+
+.request-info h4 {
+  margin-bottom: 6px;
+}
+
+.buyer-email {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.request-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+/* ---------- RENT UI ---------- */
+
+.rent-box {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.rent-box label {
+  font-size: 14px;
+  color: #374151;
+  display: flex;
+  flex-direction: column;
+}
+
+.rent-box input {
+  margin-top: 4px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+.rent-price {
+  margin-top: 6px;
+  font-size: 14px;
+  color: #111827;
+}
+.post-textarea {
+  padding: 14px 18px;
+  border-radius: 18px;
+  border: 1px solid #e5e7eb;
+  font-size: 0.95rem;
+  resize: none;
+  height: 80px;
+}
+.post-product-box {
+  max-width: 1100px;
+  margin: 40px auto 60px;
+  padding: 26px;
+  border-radius: 26px;
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(18px);
+  box-shadow: 0 30px 80px rgba(0,0,0,0.18);
+}
+
+.post-row {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.post-textarea {
+  width: 100%;
+  height: 100px;
+  padding: 16px 18px;
+  border-radius: 18px;
+  border: 1px solid #e5e7eb;
+  resize: none;
+  margin-bottom: 18px;
+}
+
+.post-footer {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+.desc-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.desc-modal {
+  width: 70%;
+  max-width: 720px;
+  background: white;
+  padding: 32px;
+  border-radius: 22px;
+  position: relative;
+  animation: fadeUp 0.3s ease;
+}
+
+.desc-modal h3 {
+  margin-bottom: 12px;
+}
+
+.desc-modal p {
+  line-height: 1.7;
+  color: #374151;
+}
+
+.desc-close {
+  position: absolute;
+  top: 14px;
+  right: 18px;
+  border: none;
+  background: none;
+  font-size: 20px;
+  cursor: pointer;
+}
