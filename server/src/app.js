@@ -11,15 +11,21 @@ import requestRoutes from "./routes/request.routes.js";
 const app = express();
 
 /* ================= CORS ================= */
+/* ================= CORS ================= */
 app.use(
   cors({
     origin: [
       "http://localhost:5173",
-      "https://your-frontend.vercel.app"
+      "https://campus-marketplace-one.vercel.app"
     ],
-    credentials: true
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
+
+// IMPORTANT: allow preflight requests
+app.options("*", cors());
 
 /* ================= MIDDLEWARE ================= */
 app.use(express.json());
