@@ -1,4 +1,4 @@
-import API from "./auth";
+import API from "./api";
 
 
 // POST PRODUCT WITH IMAGE

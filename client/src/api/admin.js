@@ -1,4 +1,4 @@
-import API from "./auth";
+import API from "./api";
 
 // GET ADMIN DASHBOARD STATS
 export const getAdminStats = () => {
