@@ -2,13 +2,13 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { accessChat } from "../api/chat";
 import { requestBuy, requestRent } from "../api/request";
+import { takeDownProduct } from "../api/product";
 import "../styles/auth.css";
 
-const ProductCard = ({ product, isOwner }) => {
+const ProductCard = ({ product, isOwner, onRemoved }) => {
   const navigate = useNavigate();
 
   const [showConfirm, setShowConfirm] = useState(false);
-  const [requestSent, setRequestSent] = useState(false);
   const [showDescription, setShowDescription] = useState(false);
 
   /* RENT STATES */
@@ -17,97 +17,78 @@ const ProductCard = ({ product, isOwner }) => {
   const [totalDays, setTotalDays] = useState(0);
   const [totalPrice, setTotalPrice] = useState(0);
 
-  /* 🔥 RENTED LOGIC */
+  /* STATUS FLAGS */
   const isRented = product.type === "rent" && product.status === "RENTED";
+  const isSold = product.status === "SOLD";
+  const isUnavailable = isRented || isSold;
 
+  /* ✅ FIXED: AVAILABLE AFTER = SAME rentTo DATE */
   const availableAfter =
     isRented && product.rentTo
-      ? new Date(
-          new Date(product.rentTo).getTime() + 24 * 60 * 60 * 1000
-        ).toLocaleDateString()
+      ? new Date(product.rentTo).toLocaleDateString()
       : null;
 
   const today = new Date().toISOString().split("T")[0];
 
-  const minEndDate = rentFrom
-    ? new Date(new Date(rentFrom).getTime() + 24 * 60 * 60 * 1000)
-        .toISOString()
-        .split("T")[0]
-    : today;
+  /* ✅ 1-DAY RENT ALLOWED */
+  const minEndDate = rentFrom || today;
 
   /* CHAT */
   const openChat = async () => {
-    try {
-      const receiverId =
-        typeof product.owner === "object"
-          ? product.owner._id
-          : product.owner;
+    const receiverId =
+      typeof product.owner === "object"
+        ? product.owner._id
+        : product.owner;
 
-      const res = await accessChat(receiverId, product._id);
-      navigate(`/chat/${res.data._id}`);
-    } catch {
-      alert("Failed to open chat");
-    }
+    const res = await accessChat(receiverId, product._id);
+    navigate(`/chat/${res.data._id}`);
   };
 
   /* RENT CALCULATION */
   const calculateRent = (from, to) => {
-    if (!from || !to) {
-      setTotalDays(0);
-      setTotalPrice(0);
-      return;
-    }
+    if (!from || !to) return;
 
     const start = new Date(from);
     const end = new Date(to);
     if (end < start) return;
 
-    const days =
-      Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1;
-
+    const days = Math.ceil((end - start) / 86400000) + 1;
     setTotalDays(days);
     setTotalPrice(days * product.price);
   };
 
   /* CONFIRM BUY / RENT */
   const confirmRequest = async () => {
-    try {
-      if (product.type === "buy") {
-        await requestBuy(product._id);
-      } else {
-        if (!rentFrom || !rentTo || totalDays < 1) {
-          alert("Select valid rent dates");
-          return;
-        }
-
-        await requestRent(product._id, {
-          rentFrom,
-          rentTo,
-          totalDays,
-          totalPrice,
-        });
+    if (product.type === "rent") {
+      if (!rentFrom || !rentTo || totalDays < 1) {
+        alert("Select valid rent dates");
+        return;
       }
 
-      setRequestSent(true);
-      setShowConfirm(false);
-      navigate("/dashboard");
-    } catch (err) {
-      alert(err.response?.data?.msg || "Request failed");
+      await requestRent(product._id, {
+        rentFrom,
+        rentTo,
+        totalDays,
+        totalPrice,
+      });
+    } else {
+      await requestBuy(product._id);
     }
+
+    navigate("/dashboard");
   };
 
-  const cancelRequest = () => {
-    setShowConfirm(false);
-    navigate("/dashboard");
+  /* SELLER TAKE DOWN */
+  const handleTakeDown = async () => {
+    if (!window.confirm("Take down this product?")) return;
+    await takeDownProduct(product._id);
+    onRemoved && onRemoved();
   };
 
   return (
     <div
       className="product-card"
-      style={{
-        opacity: isRented ? 0.45 : 1,
-        pointerEvents: isRented ? "none" : "auto",
-      }}
+      style={{ opacity: isUnavailable ? 0.45 : 1 }}
     >
       {/* IMAGE */}
       <div className="product-image-wrapper">
@@ -118,7 +99,6 @@ const ProductCard = ({ product, isOwner }) => {
         />
       </div>
 
-      {/* BASIC INFO */}
       <h4 className="product-title">{product.title}</h4>
 
       <p className="product-price">
@@ -128,122 +108,116 @@ const ProductCard = ({ product, isOwner }) => {
 
       <span className="product-status">{product.status}</span>
 
-      {/* RENTED INFO */}
+      {/* RENT INFO */}
       {isRented && (
-        <p
-          style={{
-            marginTop: "6px",
-            fontSize: "13px",
-            color: "#374151",
-            fontWeight: 500,
-          }}
-        >
-          Available for rent after <strong>{availableAfter}</strong>
+        <p style={{ fontSize: "13px", marginTop: "6px" }}>
+          Available after <strong>{availableAfter}</strong>
         </p>
       )}
 
       {/* DESCRIPTION */}
       {product.description?.trim() && (
-        <div style={{ marginTop: "8px" }}>
+        <>
           <button
             className="btn-chat"
             style={{ width: "100%" }}
-            onClick={() => setShowDescription(!showDescription)}
+            onClick={() => setShowDescription(true)}
           >
-            {showDescription ? "Hide Description" : "View Description"}
+            View Description
           </button>
 
           {showDescription && (
-            <div
-              style={{
-                marginTop: "10px",
-                padding: "14px",
-                borderRadius: "14px",
-                background: "rgba(99,102,241,0.12)",
-                color: "#1f2937",
-                fontSize: "14px",
-                lineHeight: "1.6",
-              }}
-            >
-              {product.description}
+            <div className="description-modal">
+              <div className="description-box">
+                <button
+                  className="close-btn"
+                  onClick={() => setShowDescription(false)}
+                >
+                  ✕
+                </button>
+                <h3>Description</h3>
+                <p>{product.description}</p>
+              </div>
             </div>
           )}
-        </div>
+        </>
       )}
 
-      {/* BUYER ACTIONS (DISABLED WHEN RENTED) */}
-      {!isOwner && !isRented && (
-        <div className="buyer-actions">
-          {!requestSent && (
+      {/* SELLER CONTROLS */}
+      {isOwner && product.status === "AVAILABLE" && (
+        <button className="btn-cancel" onClick={handleTakeDown}>
+          Take Down
+        </button>
+      )}
+
+      {/* BUYER ACTIONS */}
+      {!isOwner && !isUnavailable && (
+        <>
+          {!showConfirm ? (
+            <button
+              className="btn-primary"
+              onClick={() => setShowConfirm(true)}
+            >
+              Request {product.type === "buy" ? "Buy" : "Rent"}
+            </button>
+          ) : (
             <>
-              {!showConfirm ? (
-                <button
-                  className="btn-primary"
-                  onClick={() => setShowConfirm(true)}
-                >
-                  Request {product.type === "buy" ? "Buy" : "Rent"}
-                </button>
-              ) : (
-                <>
-                  {product.type === "rent" && (
-                    <div className="rent-box">
-                      <label>
-                        From
-                        <input
-                          type="date"
-                          min={today}
-                          value={rentFrom}
-                          onChange={(e) => {
-                            setRentFrom(e.target.value);
-                            calculateRent(e.target.value, rentTo);
-                          }}
-                        />
-                      </label>
+              {product.type === "rent" && (
+                <div className="rent-box">
+                  <label>
+                    From
+                    <input
+                      type="date"
+                      min={today}
+                      value={rentFrom}
+                      onChange={(e) => {
+                        setRentFrom(e.target.value);
+                        calculateRent(e.target.value, rentTo);
+                      }}
+                    />
+                  </label>
 
-                      <label>
-                        To
-                        <input
-                          type="date"
-                          min={minEndDate}
-                          value={rentTo}
-                          onChange={(e) => {
-                            setRentTo(e.target.value);
-                            calculateRent(rentFrom, e.target.value);
-                          }}
-                        />
-                      </label>
+                  <label>
+                    To
+                    <input
+                      type="date"
+                      min={minEndDate}
+                      value={rentTo}
+                      onChange={(e) => {
+                        setRentTo(e.target.value);
+                        calculateRent(rentFrom, e.target.value);
+                      }}
+                    />
+                  </label>
 
-                      {totalDays > 0 && (
-                        <p className="rent-price">
-                          ₹{product.price}/day × {totalDays} days ={" "}
-                          <strong>₹{totalPrice}</strong>
-                        </p>
-                      )}
-                    </div>
+                  {totalDays > 0 && (
+                    <p className="rent-price">
+                      ₹{product.price}/day × {totalDays} ={" "}
+                      <strong>₹{totalPrice}</strong>
+                    </p>
                   )}
-
-                  <div className="confirm-row">
-                    <button className="btn-cancel" onClick={cancelRequest}>
-                      Cancel
-                    </button>
-                    <button className="btn-confirm" onClick={confirmRequest}>
-                      Confirm {product.type === "buy" ? "Buy" : "Rent"}
-                    </button>
-                  </div>
-                </>
+                </div>
               )}
+
+              <div className="confirm-row">
+                <button
+                  className="btn-cancel"
+                  onClick={() => setShowConfirm(false)}
+                >
+                  Cancel
+                </button>
+                <button className="btn-confirm" onClick={confirmRequest}>
+                  Confirm
+                </button>
+              </div>
             </>
           )}
-        </div>
+        </>
       )}
 
-      {/* CHAT ALWAYS CLICKABLE */}
+      {/* CHAT */}
       {!isOwner && (
-        <button
-          className="btn-chat"
-          onClick={openChat}
-          style={{ pointerEvents: "auto", opacity: 1 }}
-        >
+        <button className="btn-chat" onClick={openChat}>
           💬 Chat with Seller
         </button>
       )}

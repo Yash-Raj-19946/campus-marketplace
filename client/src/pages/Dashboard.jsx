@@ -77,7 +77,10 @@ const Dashboard = () => {
         </div>
 
         {/* 🔁 REQUESTS */}
-        {view === "requests" && <RequestList />}
+        {view === "requests" && (
+          <RequestList onDone={() => setView("products")} />
+        )}
+
 
         {/* 🔁 MY PRODUCTS */}
         {view === "products" && (

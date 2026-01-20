@@ -8,6 +8,9 @@ import {
   takeDownProduct,
 } from "../controllers/product.controller.js";
 import Product from "../models/Product.js";
+import { releaseExpiredRentals } from "../utils/releaseExpiredRentals.js";
+
+
 
 const router = express.Router();
 
@@ -20,6 +23,17 @@ router.post("/", auth, upload.single("image"), createProduct);
  * GET LOGGED-IN USER PRODUCTS (Dashboard)
  */
 router.get("/my", auth, getMyProducts);
+
+router.get("/rent", auth, async (req, res) => {
+  await releaseExpiredRentals(); // 🔥 AUTO RELEASE
+
+  const products = await Product.find({
+    type: "rent",
+    owner: { $ne: req.user.id },
+  });
+
+  res.json(products);
+});
 
 /**
  * GET BUY PRODUCTS (ONLY AVAILABLE, EXCLUDE MY PRODUCTS)

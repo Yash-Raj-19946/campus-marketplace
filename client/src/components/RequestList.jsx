@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { accessChat } from "../api/chat";
 
-const RequestList = () => {
+const RequestList = ({ onDone }) => {
   const [requests, setRequests] = useState([]);
   const navigate = useNavigate();
 
@@ -20,27 +20,27 @@ const RequestList = () => {
     loadRequests();
   }, []);
 
-  // 🔥 CONFIRM → DASHBOARD
+  // ✅ CONFIRM → SWITCH TO DASHBOARD PRODUCTS
   const handleConfirm = async (requestId) => {
     try {
       await confirmRequest(requestId);
-      navigate("/dashboard", { replace: true });
-    } catch (err) {
+      onDone(); // 🔥 THIS IS THE FIX
+    } catch {
       alert("Failed to confirm request");
     }
   };
 
-  // 🔥 CANCEL → DASHBOARD
+  // ✅ CANCEL → SWITCH TO DASHBOARD PRODUCTS
   const handleCancel = async (requestId) => {
     try {
       await sellerCancelRequest(requestId);
-      navigate("/dashboard", { replace: true });
-    } catch (err) {
+      onDone(); // 🔥 THIS IS THE FIX
+    } catch {
       alert("Failed to cancel request");
     }
   };
 
-  // 🔥 CHAT WITH BUYER
+  // CHAT WITH BUYER
   const chatWithBuyer = async (buyerId, productId) => {
     const res = await accessChat(buyerId, productId);
     navigate(`/chat/${res.data._id}`);
@@ -63,23 +63,12 @@ const RequestList = () => {
                 </p>
                 <span className="buyer-email">{r.buyer.email}</span>
 
-                {/* RENT DETAILS */}
                 {r.type === "rent" && (
                   <div className="rent-details">
-                    <p>
-                      <strong>From:</strong>{" "}
-                      {new Date(r.rentFrom).toLocaleDateString()}
-                    </p>
-                    <p>
-                      <strong>To:</strong>{" "}
-                      {new Date(r.rentTo).toLocaleDateString()}
-                    </p>
-                    <p>
-                      <strong>Days:</strong> {r.totalDays}
-                    </p>
-                    <p>
-                      <strong>Total:</strong> ₹{r.totalPrice}
-                    </p>
+                    <p><strong>From:</strong> {new Date(r.rentFrom).toLocaleDateString()}</p>
+                    <p><strong>To:</strong> {new Date(r.rentTo).toLocaleDateString()}</p>
+                    <p><strong>Days:</strong> {r.totalDays}</p>
+                    <p><strong>Total:</strong> ₹{r.totalPrice}</p>
                   </div>
                 )}
               </div>

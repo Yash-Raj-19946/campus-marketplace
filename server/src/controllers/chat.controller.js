@@ -24,6 +24,7 @@ export const getChats = async (req, res) => {
 /**
  * ACCESS CHAT
  * ✅ CHAT DOES NOT MODIFY PRODUCT STATUS
+ * ✅ ONE CHAT PER USER PAIR
  */
 export const accessChat = async (req, res) => {
   try {
@@ -83,7 +84,7 @@ export const renameChat = async (req, res) => {
       chat.customNames = new Map();
     }
 
-    chat.customNames.set(req.user._id.toString(), name);
+    chat.customNames.set(req.user._id.toString(), name.trim());
     await chat.save();
 
     res.json(chat);
