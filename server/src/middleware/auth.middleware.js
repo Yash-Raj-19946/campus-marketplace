@@ -3,6 +3,11 @@ import User from "../models/User.js";
 
 export default async function authMiddleware(req, res, next) {
   try {
+    // ✅ ALLOW CORS PREFLIGHT
+    if (req.method === "OPTIONS") {
+      return next();
+    }
+
     const authHeader = req.headers.authorization;
 
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
@@ -10,10 +15,8 @@ export default async function authMiddleware(req, res, next) {
     }
 
     const token = authHeader.split(" ")[1];
-
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    // 🔥 LOAD FULL USER FROM DB
     const user = await User.findById(decoded.id).select("-password");
 
     if (!user) {
