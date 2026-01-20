@@ -1,4 +1,6 @@
-import API from "./auth";
+import API from "./api";
+
+/* ================= CHATS ================= */
 
 // GET USER CHAT LIST
 export const getChats = () => {
@@ -15,7 +17,7 @@ export const sendMessage = (chatId, content) => {
   return API.post(`/messages/${chatId}`, { content });
 };
 
-// ACCESS CHAT (SAFE)
+// ACCESS CHAT
 export const accessChat = (receiverId, productId = null) => {
   if (!receiverId) {
     throw new Error("receiverId missing");

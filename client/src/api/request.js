@@ -1,47 +1,38 @@
-import API from "./auth";
+import API from "./api";
 
-/**
- * BUY REQUEST
- */
+/* ================= REQUESTS ================= */
+
+// BUY REQUEST
 export const requestBuy = (productId) => {
   return API.post(`/requests/${productId}`, {});
 };
 
-/**
- * RENT REQUEST (🔥 BODY WAS MISSING BEFORE)
- */
+// RENT REQUEST
 export const requestRent = (productId, data) => {
   return API.post(`/requests/${productId}`, data);
 };
 
-/**
- * SELLER GET REQUESTS
- */
+// SELLER GET REQUESTS
 export const getSellerRequests = () => {
   return API.get("/requests/seller");
 };
 
-/**
- * SELLER CONFIRM
- */
+// SELLER CONFIRM
 export const confirmRequest = (requestId) => {
   return API.patch(`/requests/${requestId}/confirm`);
 };
 
-/**
- * SELLER CANCEL
- */
+// SELLER CANCEL
 export const sellerCancelRequest = (requestId) => {
   return API.patch(`/requests/${requestId}/seller-cancel`);
 };
 
-/**
- * BUYER CANCEL
- */
+// BUYER CANCEL
 export const buyerCancelRequest = (requestId) => {
   return API.patch(`/requests/${requestId}/cancel`);
 };
+
+// BUYER HISTORY
 export const getMyHistory = () => {
   return API.get("/requests/my-history");
 };
-
