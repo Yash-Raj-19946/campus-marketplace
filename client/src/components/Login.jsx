@@ -9,11 +9,14 @@ const Login = () => {
 
   const submit = async (e) => {
     e.preventDefault();
-    try {
-      // 🔥 ONLY login — do NOT call /me here
-      await loginUser(data);
 
-      // AuthContext will automatically load user using token
+    try {
+      const res = await loginUser(data);
+
+      // 🔥 STORE TOKEN (YOU MISSED THIS)
+      localStorage.setItem("token", res.data.token);
+
+      // 🔥 AuthContext will auto-fetch user
       navigate("/dashboard");
     } catch (err) {
       alert(err.response?.data?.msg || "Login failed");

@@ -11,20 +11,19 @@ import requestRoutes from "./routes/request.routes.js";
 const app = express();
 
 /* ================= CORS ================= */
-/* ================= CORS ================= */
 app.use(
   cors({
     origin: [
-      "https://campus-marketplace-api.onrender.com/api:5173",
-      "https://campus-marketplace-one.vercel.app"
+      "http://localhost:5173",
+      "https://campus-marketplace-one.vercel.app",
     ],
     credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
-// IMPORTANT: allow preflight requests
+// 🔥 allow preflight
 app.options("*", cors());
 
 /* ================= MIDDLEWARE ================= */

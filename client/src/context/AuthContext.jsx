@@ -7,7 +7,6 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // 🔥 Load user on app start if token exists
   useEffect(() => {
     const token = localStorage.getItem("token");
 
@@ -21,11 +20,9 @@ export const AuthProvider = ({ children }) => {
         setUser(res.data);
       })
       .catch((err) => {
-        console.error(
-          "GET /auth/me failed:",
-          err.response?.data || err.message
-        );
-        // ❌ DO NOT auto-logout here
+        console.error("GET /auth/me failed:", err.response?.data || err.message);
+        // token invalid → logout
+        logoutUser();
         setUser(null);
       })
       .finally(() => setLoading(false));
@@ -38,14 +35,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider
-      value={{
-        user,
-        setUser,
-        loading,
-        logout,
-      }}
-    >
+    <AuthContext.Provider value={{ user, setUser, loading, logout }}>
       {children}
     </AuthContext.Provider>
   );
