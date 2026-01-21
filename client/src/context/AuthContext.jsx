@@ -1,42 +1,54 @@
-import { createContext, useEffect, useState } from "react";
-import { getProfile, logoutUser } from "../api/auth";
+import { useState } from "react";
+import { loginUser } from "../api/auth";
+import { useNavigate } from "react-router-dom";
+import "../styles/auth.css";
 
-export const AuthContext = createContext();
+const Login = () => {
+  const [data, setData] = useState({ email: "", password: "" });
+  const navigate = useNavigate();
 
-export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const submit = async (e) => {
+    e.preventDefault();
 
-  useEffect(() => {
-    const token = localStorage.getItem("token");
+    try {
+      // 🔥 loginUser already stores token internally
+      await loginUser(data);
 
-    if (!token) {
-      setLoading(false);
-      return;
+      // ✅ SUCCESS → go to HOME
+      navigate("/", { replace: true });
+    } catch (err) {
+      // ❌ FAILURE → stay on /login
+      alert(err.response?.data?.msg || "Invalid email or password");
     }
-
-    getProfile()
-      .then((res) => {
-        setUser(res.data);
-      })
-      .catch((err) => {
-        console.error("GET /auth/me failed:", err.response?.data || err.message);
-        // token invalid → logout
-        logoutUser();
-        setUser(null);
-      })
-      .finally(() => setLoading(false));
-  }, []);
-
-  const logout = () => {
-    logoutUser();
-    setUser(null);
-    window.location.href = "/";
   };
 
   return (
-    <AuthContext.Provider value={{ user, setUser, loading, logout }}>
-      {children}
-    </AuthContext.Provider>
+    <div className="page auth-page">
+      <div className="blob blob-1" />
+      <div className="blob blob-2" />
+
+      <form className="auth-card" onSubmit={submit}>
+        <h2>Login</h2>
+        <p>Welcome back to Campus Marketplace</p>
+
+        <input
+          type="email"
+          placeholder="College Email"
+          required
+          onChange={(e) => setData({ ...data, email: e.target.value })}
+        />
+
+        <input
+          type="password"
+          placeholder="Password"
+          required
+          onChange={(e) => setData({ ...data, password: e.target.value })}
+        />
+
+        <button className="btn primary">Login</button>
+      </form>
+    </div>
   );
 };
+
+export default Login;

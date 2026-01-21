@@ -11,12 +11,10 @@ const Login = () => {
     e.preventDefault();
 
     try {
-      const res = await loginUser(data);
+      // 🔥 loginUser already stores token
+      await loginUser(data);
 
-      // 🔥 STORE TOKEN (YOU MISSED THIS)
-      localStorage.setItem("token", res.data.token);
-
-      // 🔥 AuthContext will auto-fetch user
+      // 🔥 Let AuthContext load user
       navigate("/dashboard");
     } catch (err) {
       alert(err.response?.data?.msg || "Login failed");
