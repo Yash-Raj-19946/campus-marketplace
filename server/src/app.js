@@ -15,7 +15,7 @@ const app = express();
 app.use(
   cors({
     origin: [
-      "http://localhost:5173",
+      "https://campus-marketplace-api.onrender.com/api:5173",
       "https://campus-marketplace-one.vercel.app"
     ],
     credentials: true,

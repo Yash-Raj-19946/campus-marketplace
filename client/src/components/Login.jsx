@@ -16,7 +16,7 @@ const Login = () => {
 
       localStorage.setItem("token", res.data.token);
 
-      const profileRes = await fetch("http://localhost:5000/api/auth/me", {
+      const profileRes = await fetch("https://campus-marketplace-api.onrender.com/api/api/auth/me", {
         headers: {
           Authorization: `Bearer ${res.data.token}`,
         },
