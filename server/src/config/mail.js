@@ -5,29 +5,33 @@ export const sendVerificationMail = async (email, token) => {
 
   try {
     await axios.post(
-      "https://api.brevo.com/v3/smtp/email",
-      {
-        sender: {
-          email: process.env.EMAIL_FROM,
-          name: "Campus Marketplace",
-        },
-        to: [{ email }],
-        subject: "Verify your college email",
-        htmlContent: `
-          <h2>Campus Marketplace</h2>
-          <p>Please verify your email by clicking the link below:</p>
-          <a href="${link}">${link}</a>
-          <br/><br/>
-          <p>If you didn’t create this account, you can ignore this email.</p>
-        `,
-      },
-      {
-        headers: {
-          "api-key": process.env.BREVO_API_KEY,
-          "Content-Type": "application/json",
-        },
-      }
-    );
+  "https://api.brevo.com/v3/smtp/email",
+  {
+    sender: {
+      email: process.env.EMAIL_FROM,
+      name: "Campus Marketplace",
+    },
+    to: [{ email }],
+    subject: "Verify your college email",
+
+    // 🔥 IMPORTANT: single-line HTML, no newlines
+    htmlContent:
+      '<h2>Campus Marketplace</h2>' +
+      '<p>Please verify your email by clicking the link below:</p>' +
+      '<a href="' + link + '">' + link + '</a>' +
+      '<p>If you didn’t create this account, you can ignore this email.</p>',
+  },
+  {
+    headers: {
+      "api-key": process.env.BREVO_API_KEY,
+      "Content-Type": "application/json",
+
+      // 🔥 IMPORTANT: disable Brevo click tracking
+      "X-Mailin-Track": "0",
+    },
+  }
+);
+
 
     console.log(`📧 Verification email sent to ${email}`);
   } catch (err) {
