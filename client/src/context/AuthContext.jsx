@@ -7,7 +7,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Load user on app start if token exists
+  // 🔥 Load user on app start if token exists
   useEffect(() => {
     const token = localStorage.getItem("token");
 
@@ -18,22 +18,24 @@ export const AuthProvider = ({ children }) => {
 
     getProfile()
       .then((res) => {
-        // 🔥 FIX: backend returns user directly
         setUser(res.data);
       })
-      .catch(() => {
-        logoutUser();
+      .catch((err) => {
+        console.error(
+          "GET /auth/me failed:",
+          err.response?.data || err.message
+        );
+        // ❌ DO NOT auto-logout here
         setUser(null);
       })
       .finally(() => setLoading(false));
   }, []);
 
   const logout = () => {
-  logoutUser();
-  setUser(null);
-  window.location.href = "/"; // 🔥 force navigation
-};
-
+    logoutUser();
+    setUser(null);
+    window.location.href = "/";
+  };
 
   return (
     <AuthContext.Provider

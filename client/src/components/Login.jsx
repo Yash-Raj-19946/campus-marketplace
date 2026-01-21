@@ -1,29 +1,19 @@
-import { useState, useContext } from "react";
+import { useState } from "react";
 import { loginUser } from "../api/auth";
-import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import "../styles/auth.css";
 
 const Login = () => {
   const [data, setData] = useState({ email: "", password: "" });
-  const { setUser } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const submit = async (e) => {
     e.preventDefault();
     try {
-      const res = await loginUser(data);
+      // 🔥 ONLY login — do NOT call /me here
+      await loginUser(data);
 
-      localStorage.setItem("token", res.data.token);
-
-      const profileRes = await fetch("https://campus-marketplace-api.onrender.com/api/api/auth/me", {
-        headers: {
-          Authorization: `Bearer ${res.data.token}`,
-        },
-      });
-      const user = await profileRes.json();
-
-      setUser(user);
+      // AuthContext will automatically load user using token
       navigate("/dashboard");
     } catch (err) {
       alert(err.response?.data?.msg || "Login failed");
