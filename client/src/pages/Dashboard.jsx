@@ -38,12 +38,7 @@ const Dashboard = () => {
       <div className="blob blob-3" />
 
       <section className="dashboard">
-        {/* 🔹 TITLE */}
-        <h1 style={{ marginBottom: "14px" }}>
-          My Dashboard
-        </h1>
-
-        {/* 🔹 SUBTITLE */}
+        <h1 style={{ marginBottom: "14px" }}>My Dashboard</h1>
         <p style={{ marginBottom: "36px" }}>
           Post products, manage listings, and handle requests.
         </p>
@@ -54,25 +49,28 @@ const Dashboard = () => {
             display: "flex",
             justifyContent: "center",
             gap: "22px",
-            marginBottom: "60px", // ⬅️ more breathing space
+            marginBottom: "60px",
+            flexWrap: "wrap",
           }}
         >
           <button className="post-btn" onClick={() => navigate("/chat")}>
             My Chats
           </button>
 
-          <button
-            className="post-btn"
-            onClick={() => setView("requests")}
-          >
+          <button className="post-btn" onClick={() => setView("requests")}>
             Requests
           </button>
 
+          <button className="post-btn" onClick={() => navigate("/my-buys")}>
+            My Buys
+          </button>
+
+          {/* 🔥 NEW WISHLIST BUTTON */}
           <button
             className="post-btn"
-            onClick={() => navigate("/my-buys")}
+            onClick={() => navigate("/wishlist")}
           >
-            My Buys
+            Wishlist 🤍
           </button>
         </div>
 
@@ -80,7 +78,6 @@ const Dashboard = () => {
         {view === "requests" && (
           <RequestList onDone={() => setView("products")} />
         )}
-
 
         {/* 🔁 MY PRODUCTS */}
         {view === "products" && (

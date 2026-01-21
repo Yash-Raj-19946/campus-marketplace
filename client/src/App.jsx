@@ -25,6 +25,8 @@ import MyBuys from "./pages/MyBuys";
 import BoughtProducts from "./pages/BoughtProducts";
 import RentedProducts from "./pages/RentedProducts";
 
+import Wishlist from "./pages/Wishlist";
+
 const App = () => {
   return (
     <AuthProvider>
@@ -77,6 +79,15 @@ const App = () => {
               </ProtectedRoute>
             }
           />
+          <Route
+          path="/wishlist"
+          element={
+          <ProtectedRoute>
+            <Wishlist />
+            </ProtectedRoute>
+          }
+          />
+
           <Route
             path="/my-buys/bought"
             element={

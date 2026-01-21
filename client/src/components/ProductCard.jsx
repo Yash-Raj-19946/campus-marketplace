@@ -3,6 +3,7 @@ import { useState } from "react";
 import { accessChat } from "../api/chat";
 import { requestBuy, requestRent } from "../api/request";
 import { takeDownProduct } from "../api/product";
+import API from "../api/axios";
 import "../styles/auth.css";
 
 const ProductCard = ({ product, isOwner, onRemoved }) => {
@@ -22,15 +23,12 @@ const ProductCard = ({ product, isOwner, onRemoved }) => {
   const isSold = product.status === "SOLD";
   const isUnavailable = isRented || isSold;
 
-  /* ✅ FIXED: AVAILABLE AFTER = SAME rentTo DATE */
   const availableAfter =
     isRented && product.rentTo
       ? new Date(product.rentTo).toLocaleDateString()
       : null;
 
   const today = new Date().toISOString().split("T")[0];
-
-  /* ✅ 1-DAY RENT ALLOWED */
   const minEndDate = rentFrom || today;
 
   /* CHAT */
@@ -85,12 +83,21 @@ const ProductCard = ({ product, isOwner, onRemoved }) => {
     onRemoved && onRemoved();
   };
 
+  /* 🔥 ADD TO WISHLIST */
+  const addToWishlist = async () => {
+    try {
+      await API.post("/wishlist", { productId: product._id });
+      alert("Added to wishlist 🤍");
+    } catch (err) {
+      alert(err.response?.data?.msg || "Already in wishlist");
+    }
+  };
+
   return (
     <div
       className="product-card"
       style={{ opacity: isUnavailable ? 0.45 : 1 }}
     >
-      {/* IMAGE */}
       <div className="product-image-wrapper">
         <img
           src={product.image}
@@ -108,7 +115,6 @@ const ProductCard = ({ product, isOwner, onRemoved }) => {
 
       <span className="product-status">{product.status}</span>
 
-      {/* RENT INFO */}
       {isRented && (
         <p style={{ fontSize: "13px", marginTop: "6px" }}>
           Available after <strong>{availableAfter}</strong>
@@ -154,12 +160,19 @@ const ProductCard = ({ product, isOwner, onRemoved }) => {
       {!isOwner && !isUnavailable && (
         <>
           {!showConfirm ? (
-            <button
-              className="btn-primary"
-              onClick={() => setShowConfirm(true)}
-            >
-              Request {product.type === "buy" ? "Buy" : "Rent"}
-            </button>
+            <>
+              <button
+                className="btn-primary"
+                onClick={() => setShowConfirm(true)}
+              >
+                Request {product.type === "buy" ? "Buy" : "Rent"}
+              </button>
+
+              {/* 🔥 WISHLIST BUTTON */}
+              <button className="btn-chat" onClick={addToWishlist}>
+                🤍 Add to Wishlist
+              </button>
+            </>
           ) : (
             <>
               {product.type === "rent" && (
@@ -215,7 +228,6 @@ const ProductCard = ({ product, isOwner, onRemoved }) => {
         </>
       )}
 
-      {/* CHAT */}
       {!isOwner && (
         <button className="btn-chat" onClick={openChat}>
           💬 Chat with Seller
