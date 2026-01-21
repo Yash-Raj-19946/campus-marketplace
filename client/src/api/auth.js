@@ -1,25 +1,18 @@
-import API from "./api";
+import axios from "axios";
 
-// REGISTER
-export const registerUser = (data) => API.post("/auth/register", data);
+const API = axios.create({
+  baseURL: "https://campus-marketplace-api.onrender.com/api",
+  withCredentials: true,
+});
 
-// LOGIN
-export const loginUser = async (data) => {
-  const res = await API.post("/auth/login", data);
-  if (res.data?.token) {
-    localStorage.setItem("token", res.data.token);
+API.interceptors.request.use((config) => {
+  const token = localStorage.getItem("token");
+
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
   }
-  return res;
-};
 
-// VERIFY EMAIL
-export const verifyEmail = (token) =>
-  API.get(`/auth/verify-email/${token}`);
+  return config;
+});
 
-// PROFILE
-export const getProfile = () => API.get("/auth/me");
-
-// LOGOUT
-export const logoutUser = () => {
-  localStorage.removeItem("token");
-};
+export default API;

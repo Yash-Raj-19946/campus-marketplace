@@ -1,8 +1,8 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "https://your-backend.onrender.com/api",
-  withCredentials: true
+  baseURL: "https://campus-marketplace-api.onrender.com",
+  withCredentials: true,
 });
 
 export default api;
