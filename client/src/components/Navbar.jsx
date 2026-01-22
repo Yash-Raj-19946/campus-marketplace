@@ -10,26 +10,26 @@ const Navbar = () => {
   const handleSearch = (e) => {
     e.preventDefault();
     if (!search.trim()) return;
-    navigate(`/buy?search=${search}`);
+
+    navigate(`/buy?search=${encodeURIComponent(search)}`);
     setSearch("");
   };
 
-  // 🔥 FIXED LOGOUT
   const handleLogout = () => {
-    logout();
-    navigate("/"); // ✅ instant redirect to home
+    logout();           // clears token + context
+    navigate("/");      // instant redirect
   };
 
   return (
     <header className="navbar">
-      {/* LEFT: TITLE */}
+      {/* LEFT */}
       <div className="navbar-box navbar-left">
         <Link to="/" className="navbar-title">
           College Buy & Rent Marketplace
         </Link>
       </div>
 
-      {/* CENTER: SEARCH */}
+      {/* CENTER */}
       <div className="navbar-box navbar-search">
         <form onSubmit={handleSearch}>
           <input
@@ -41,7 +41,7 @@ const Navbar = () => {
         </form>
       </div>
 
-      {/* RIGHT: AUTH */}
+      {/* RIGHT */}
       <div className="navbar-box navbar-right">
         {user ? (
           <>
