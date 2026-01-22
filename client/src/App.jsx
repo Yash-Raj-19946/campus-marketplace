@@ -25,6 +25,7 @@ import MyBuys from "./pages/MyBuys";
 import BoughtProducts from "./pages/BoughtProducts";
 import RentedProducts from "./pages/RentedProducts";
 
+/* Wishlist */
 import Wishlist from "./pages/Wishlist";
 
 const App = () => {
@@ -80,15 +81,6 @@ const App = () => {
             }
           />
           <Route
-          path="/wishlist"
-          element={
-          <ProtectedRoute>
-            <Wishlist />
-            </ProtectedRoute>
-          }
-          />
-
-          <Route
             path="/my-buys/bought"
             element={
               <ProtectedRoute>
@@ -101,6 +93,16 @@ const App = () => {
             element={
               <ProtectedRoute>
                 <RentedProducts />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Wishlist */}
+          <Route
+            path="/wishlist"
+            element={
+              <ProtectedRoute>
+                <Wishlist />
               </ProtectedRoute>
             }
           />
