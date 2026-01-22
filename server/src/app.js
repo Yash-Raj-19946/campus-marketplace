@@ -7,6 +7,7 @@ import chatRoutes from "./routes/chat.routes.js";
 import adminRoutes from "./routes/admin.routes.js";
 import messageRoutes from "./routes/message.routes.js";
 import requestRoutes from "./routes/request.routes.js";
+import wishlistRoutes from "./routes/wishlist.routes.js";
 
 const app = express();
 
@@ -22,6 +23,7 @@ app.use(
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
+app.use("/api/wishlist", wishlistRoutes);
 
 // 🔥 allow preflight
 app.options("*", cors());
