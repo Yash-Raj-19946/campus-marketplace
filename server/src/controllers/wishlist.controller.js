@@ -50,3 +50,28 @@ export const getWishlist = async (req, res) => {
     res.status(500).json({ msg: "Failed to load wishlist" });
   }
 };
+export const removeFromWishlist = async (req, res) => {
+  try {
+    const { productId } = req.params;
+
+    const wishlist = await Wishlist.findOne({
+      user: req.user._id,
+    });
+
+    if (!wishlist) {
+      return res.status(404).json({ msg: "Wishlist not found" });
+    }
+
+    wishlist.products = wishlist.products.filter(
+      (id) => id.toString() !== productId
+    );
+
+    await wishlist.save();
+
+    res.json({ msg: "Removed from wishlist" });
+  } catch (err) {
+    console.error("REMOVE WISHLIST ERROR:", err);
+    res.status(500).json({ msg: "Failed to remove from wishlist" });
+  }
+};
+

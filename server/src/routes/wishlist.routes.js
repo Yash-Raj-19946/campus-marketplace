@@ -4,6 +4,7 @@ import {
   addToWishlist,
   getWishlist,
 } from "../controllers/wishlist.controller.js";
+import { removeFromWishlist } from "../controllers/wishlist.controller.js";
 
 const router = express.Router();
 
@@ -12,5 +13,8 @@ router.post("/", authMiddleware, addToWishlist);
 
 // GET → fetch wishlist
 router.get("/", authMiddleware, getWishlist);
+
+router.delete("/:productId", authMiddleware, removeFromWishlist);
+
 
 export default router;

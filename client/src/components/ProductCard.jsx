@@ -6,7 +6,12 @@ import { takeDownProduct } from "../api/product";
 import API from "../api/axios";
 import "../styles/auth.css";
 
-const ProductCard = ({ product, isOwner, onRemoved }) => {
+const ProductCard = ({
+  product,
+  isOwner,
+  onRemoved,
+  wishlistMode = false, // 🔥 NEW (default false)
+}) => {
   const navigate = useNavigate();
 
   const [showConfirm, setShowConfirm] = useState(false);
@@ -75,7 +80,7 @@ const ProductCard = ({ product, isOwner, onRemoved }) => {
       }
 
       navigate("/dashboard");
-    } catch (err) {
+    } catch {
       alert("Request failed");
     }
   };
@@ -93,15 +98,22 @@ const ProductCard = ({ product, isOwner, onRemoved }) => {
       const res = await API.post("/wishlist", {
         productId: product._id,
       });
-
       alert(res.data?.msg || "Added to wishlist 🤍");
     } catch (err) {
-      console.error("Wishlist error:", err.response || err);
+      alert(err.response?.data?.msg || "Failed to add to wishlist");
+    }
+  };
 
-      alert(
-        err.response?.data?.msg ||
-          "Please login again or try later"
-      );
+  /* ❌ REMOVE FROM WISHLIST */
+  const removeFromWishlist = async () => {
+    try {
+      await API.delete(`/wishlist/${product._id}`);
+      alert("Removed from wishlist");
+
+      // 🔥 refresh wishlist list
+      onRemoved && onRemoved();
+    } catch {
+      alert("Failed to remove from wishlist");
     }
   };
 
@@ -180,9 +192,22 @@ const ProductCard = ({ product, isOwner, onRemoved }) => {
                 Request {product.type === "buy" ? "Buy" : "Rent"}
               </button>
 
-              <button className="btn-chat" onClick={addToWishlist}>
-                🤍 Add to Wishlist
-              </button>
+              {/* 🔥 WISHLIST TOGGLE */}
+              {wishlistMode ? (
+                <button
+                  className="btn-cancel"
+                  onClick={removeFromWishlist}
+                >
+                  ❌ Remove from Wishlist
+                </button>
+              ) : (
+                <button
+                  className="btn-chat"
+                  onClick={addToWishlist}
+                >
+                  🤍 Add to Wishlist
+                </button>
+              )}
             </>
           ) : (
             <>
