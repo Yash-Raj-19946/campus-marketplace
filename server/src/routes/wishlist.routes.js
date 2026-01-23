@@ -1,21 +1,16 @@
-import mongoose from "mongoose";
+import express from "express";
+import authMiddleware from "../middleware/auth.middleware.js";
+import {
+  addToWishlist,
+  getWishlist,
+} from "../controllers/wishlist.controller.js";
 
-const wishlistSchema = new mongoose.Schema(
-  {
-    user: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
-      unique: true, // one wishlist per user
-    },
-    products: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Product",
-      },
-    ],
-  },
-  { timestamps: true }
-);
+const router = express.Router();
 
-export default mongoose.model("Wishlist", wishlistSchema);
+// POST → add product
+router.post("/", authMiddleware, addToWishlist);
+
+// GET → fetch wishlist
+router.get("/", authMiddleware, getWishlist);
+
+export default router;

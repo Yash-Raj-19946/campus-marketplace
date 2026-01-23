@@ -23,9 +23,8 @@ app.use(
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
-app.use("/api/wishlist", wishlistRoutes);
 
-// 🔥 allow preflight
+// 🔥 PRE-FLIGHT
 app.options("*", cors());
 
 /* ================= MIDDLEWARE ================= */
@@ -38,6 +37,7 @@ app.use("/api/chats", chatRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/messages", messageRoutes);
 app.use("/api/requests", requestRoutes);
+app.use("/api/wishlist", wishlistRoutes);
 
 app.get("/", (req, res) => {
   res.send("Campus Marketplace API is running 🚀");
