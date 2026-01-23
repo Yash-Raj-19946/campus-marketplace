@@ -57,23 +57,27 @@ const ProductCard = ({ product, isOwner, onRemoved }) => {
 
   /* CONFIRM BUY / RENT */
   const confirmRequest = async () => {
-    if (product.type === "rent") {
-      if (!rentFrom || !rentTo || totalDays < 1) {
-        alert("Select valid rent dates");
-        return;
+    try {
+      if (product.type === "rent") {
+        if (!rentFrom || !rentTo || totalDays < 1) {
+          alert("Select valid rent dates");
+          return;
+        }
+
+        await requestRent(product._id, {
+          rentFrom,
+          rentTo,
+          totalDays,
+          totalPrice,
+        });
+      } else {
+        await requestBuy(product._id);
       }
 
-      await requestRent(product._id, {
-        rentFrom,
-        rentTo,
-        totalDays,
-        totalPrice,
-      });
-    } else {
-      await requestBuy(product._id);
+      navigate("/dashboard");
+    } catch (err) {
+      alert("Request failed");
     }
-
-    navigate("/dashboard");
   };
 
   /* SELLER TAKE DOWN */
@@ -83,13 +87,21 @@ const ProductCard = ({ product, isOwner, onRemoved }) => {
     onRemoved && onRemoved();
   };
 
-  /* 🔥 ADD TO WISHLIST */
+  /* ❤️ ADD TO WISHLIST */
   const addToWishlist = async () => {
     try {
-      await API.post("/wishlist", { productId: product._id });
-      alert("Added to wishlist 🤍");
+      const res = await API.post("/wishlist", {
+        productId: product._id,
+      });
+
+      alert(res.data?.msg || "Added to wishlist 🤍");
     } catch (err) {
-      alert(err.response?.data?.msg || "Already in wishlist");
+      console.error("Wishlist error:", err.response || err);
+
+      alert(
+        err.response?.data?.msg ||
+          "Please login again or try later"
+      );
     }
   };
 
@@ -168,7 +180,6 @@ const ProductCard = ({ product, isOwner, onRemoved }) => {
                 Request {product.type === "buy" ? "Buy" : "Rent"}
               </button>
 
-              {/* 🔥 WISHLIST BUTTON */}
               <button className="btn-chat" onClick={addToWishlist}>
                 🤍 Add to Wishlist
               </button>
@@ -219,7 +230,10 @@ const ProductCard = ({ product, isOwner, onRemoved }) => {
                 >
                   Cancel
                 </button>
-                <button className="btn-confirm" onClick={confirmRequest}>
+                <button
+                  className="btn-confirm"
+                  onClick={confirmRequest}
+                >
                   Confirm
                 </button>
               </div>
