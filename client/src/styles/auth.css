@@ -534,3 +534,13 @@
   font-size: 20px;
   cursor: pointer;
 }
+/* Wishlist remove button – softer danger */
+.btn-cancel {
+  background: rgba(255, 80, 80, 0.15);
+  color: #ff5a5a;
+  border: 1px solid rgba(255, 80, 80, 0.35);
+}
+
+.btn-cancel:hover {
+  background: rgba(255, 80, 80, 0.25);
+}
