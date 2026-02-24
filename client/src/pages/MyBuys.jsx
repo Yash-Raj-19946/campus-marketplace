@@ -11,30 +11,34 @@ const MyBuys = () => {
       <div className="blob blob-3" />
 
       <section className="dashboard">
-        <h1>My Buys</h1>
-        <p>View products you have bought or rented.</p>
+        {/* Page header */}
+        <div className="mybuys-header">
+          <span className="mybuys-eyebrow">Transaction History</span>
+          <h1 className="page-title">My Purchases</h1>
+          <p className="page-subtitle">View everything you've bought or rented on the platform.</p>
+        </div>
 
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            gap: "20px",
-            marginTop: "40px",
-          }}
-        >
-          <button
-            className="post-btn"
-            onClick={() => navigate("/my-buys/bought")}
-          >
-            Bought Products
+        {/* Choice cards */}
+        <div className="mybuys-grid">
+
+          <button className="mybuys-card" onClick={() => navigate("/my-buys/bought")}>
+            <div className="mybuys-card-icon bought-icon">🛍️</div>
+            <div className="mybuys-card-body">
+              <h3 className="mybuys-card-title">Bought Products</h3>
+              <p className="mybuys-card-desc">Items you've permanently purchased from sellers.</p>
+            </div>
+            <span className="mybuys-card-arrow">→</span>
           </button>
 
-          <button
-            className="post-btn"
-            onClick={() => navigate("/my-buys/rented")}
-          >
-            Rented Products
+          <button className="mybuys-card" onClick={() => navigate("/my-buys/rented")}>
+            <div className="mybuys-card-icon rented-icon">📦</div>
+            <div className="mybuys-card-body">
+              <h3 className="mybuys-card-title">Rented Products</h3>
+              <p className="mybuys-card-desc">Items you've rented — active, past, and upcoming.</p>
+            </div>
+            <span className="mybuys-card-arrow">→</span>
           </button>
+
         </div>
       </section>
     </div>

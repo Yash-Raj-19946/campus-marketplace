@@ -1,31 +1,34 @@
+import { useNavigate } from "react-router-dom";
 import MyProductHistory from "../components/MyProductHistory";
 import "../styles/auth.css";
 
 const RentedProducts = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="page">
-      {/* 🔮 THEME BLOBS */}
       <div className="blob blob-1" />
       <div className="blob blob-2" />
       <div className="blob blob-3" />
 
       <section className="dashboard">
-        <h1 className="page-title">Rented Products</h1>
-        <p className="page-subtitle">
-          Products you are currently renting or have rented before.
-        </p>
+        {/* Breadcrumb */}
+        <button className="history-back" onClick={() => navigate("/my-buys")}>
+          ← Back to Purchases
+        </button>
 
-        {/* 🧊 GLASS CONTAINER */}
-        <div
-          style={{
-            marginTop: "40px",
-            padding: "30px",
-            borderRadius: "26px",
-            background: "rgba(255, 255, 255, 0.75)",
-            backdropFilter: "blur(18px)",
-            boxShadow: "0 35px 90px rgba(139,92,246,0.25)",
-          }}
-        >
+        {/* Header block */}
+        <div className="history-page-header">
+          <div className="history-icon-badge rented-badge">📦</div>
+          <div>
+            <span className="mybuys-eyebrow">Rental History</span>
+            <h1 className="page-title">Rented Products</h1>
+            <p className="page-subtitle">Products you are currently renting or have rented before.</p>
+          </div>
+        </div>
+
+        {/* Content panel */}
+        <div className="history-panel">
           <MyProductHistory type="rent" />
         </div>
       </section>

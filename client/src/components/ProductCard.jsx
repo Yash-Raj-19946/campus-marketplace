@@ -10,7 +10,7 @@ const ProductCard = ({
   product,
   isOwner,
   onRemoved,
-  wishlistMode = false, // 🔥 NEW (default false)
+  wishlistMode = false,
 }) => {
   const navigate = useNavigate();
 
@@ -30,7 +30,7 @@ const ProductCard = ({
 
   const availableAfter =
     isRented && product.rentTo
-      ? new Date(product.rentTo).toLocaleDateString()
+      ? new Date(product.rentTo).toLocaleDateString("en-IN", { day: "numeric", month: "short" })
       : null;
 
   const today = new Date().toISOString().split("T")[0];
@@ -39,28 +39,23 @@ const ProductCard = ({
   /* CHAT */
   const openChat = async () => {
     const receiverId =
-      typeof product.owner === "object"
-        ? product.owner._id
-        : product.owner;
-
+      typeof product.owner === "object" ? product.owner._id : product.owner;
     const res = await accessChat(receiverId, product._id);
     navigate(`/chat/${res.data._id}`);
   };
 
-  /* RENT CALCULATION */
+  /* RENT CALC */
   const calculateRent = (from, to) => {
     if (!from || !to) return;
-
     const start = new Date(from);
     const end = new Date(to);
     if (end < start) return;
-
     const days = Math.ceil((end - start) / 86400000) + 1;
     setTotalDays(days);
     setTotalPrice(days * product.price);
   };
 
-  /* CONFIRM BUY / RENT */
+  /* CONFIRM */
   const confirmRequest = async () => {
     try {
       if (product.type === "rent") {
@@ -68,211 +63,177 @@ const ProductCard = ({
           alert("Select valid rent dates");
           return;
         }
-
-        await requestRent(product._id, {
-          rentFrom,
-          rentTo,
-          totalDays,
-          totalPrice,
-        });
+        await requestRent(product._id, { rentFrom, rentTo, totalDays, totalPrice });
       } else {
         await requestBuy(product._id);
       }
-
       navigate("/dashboard");
     } catch {
       alert("Request failed");
     }
   };
 
-  /* SELLER TAKE DOWN */
+  /* TAKE DOWN */
   const handleTakeDown = async () => {
     if (!window.confirm("Take down this product?")) return;
     await takeDownProduct(product._id);
     onRemoved && onRemoved();
   };
 
-  /* ❤️ ADD TO WISHLIST */
+  /* WISHLIST */
   const addToWishlist = async () => {
     try {
-      const res = await API.post("/wishlist", {
-        productId: product._id,
-      });
+      const res = await API.post("/wishlist", { productId: product._id });
       alert(res.data?.msg || "Added to wishlist 🤍");
     } catch (err) {
       alert(err.response?.data?.msg || "Failed to add to wishlist");
     }
   };
 
-  /* ❌ REMOVE FROM WISHLIST */
   const removeFromWishlist = async () => {
     try {
       await API.delete(`/wishlist/${product._id}`);
-      alert("Removed from wishlist");
-
-      // 🔥 refresh wishlist list
       onRemoved && onRemoved();
     } catch {
       alert("Failed to remove from wishlist");
     }
   };
 
+  /* Status label */
+  const statusLabel = isSold ? "Sold" : isRented ? "Rented" : "Available";
+  const statusClass = isSold ? "status-sold" : isRented ? "status-rented" : "status-available";
+
   return (
-    <div
-      className="product-card"
-      style={{ opacity: isUnavailable ? 0.45 : 1 }}
-    >
-      <div className="product-image-wrapper">
-        <img
-          src={product.image}
-          alt={product.title}
-          className="product-image"
-        />
-      </div>
+    <>
+      <div className={`product-card ${isUnavailable ? "pc-unavailable" : ""}`}>
 
-      <h4 className="product-title">{product.title}</h4>
+        {/* ── IMAGE ── */}
+        <div className="product-image-wrapper">
+          <img src={product.image} alt={product.title} className="product-image" />
 
-      <p className="product-price">
-        ₹ {product.price}
-        {product.type === "rent" && <span> / day</span>}
-      </p>
+          {/* Type pill on image */}
+          <span className={`pc-type-pill ${product.type === "rent" ? "type-rent" : "type-buy"}`}>
+            {product.type === "rent" ? "Rent" : "Buy"}
+          </span>
 
-      <span className="product-status">{product.status}</span>
-
-      {isRented && (
-        <p style={{ fontSize: "13px", marginTop: "6px" }}>
-          Available after <strong>{availableAfter}</strong>
-        </p>
-      )}
-
-      {/* DESCRIPTION */}
-      {product.description?.trim() && (
-        <>
-          <button
-            className="btn-chat"
-            style={{ width: "100%" }}
-            onClick={() => setShowDescription(true)}
-          >
-            View Description
-          </button>
-
-          {showDescription && (
-            <div className="description-modal">
-              <div className="description-box">
-                <button
-                  className="close-btn"
-                  onClick={() => setShowDescription(false)}
-                >
-                  ✕
-                </button>
-                <h3>Description</h3>
-                <p>{product.description}</p>
-              </div>
+          {/* Unavailable overlay */}
+          {isUnavailable && (
+            <div className="pc-unavailable-overlay">
+              <span>{statusLabel}</span>
             </div>
           )}
-        </>
-      )}
+        </div>
 
-      {/* SELLER CONTROLS */}
-      {isOwner && product.status === "AVAILABLE" && (
-        <button className="btn-cancel" onClick={handleTakeDown}>
-          Take Down
-        </button>
-      )}
+        {/* ── BODY ── */}
+        <div className="pc-body">
+          <div className="pc-title-row">
+            <h4 className="product-title">{product.title}</h4>
+            <span className={`pc-status-dot ${statusClass}`} title={statusLabel} />
+          </div>
 
-      {/* BUYER ACTIONS */}
-      {!isOwner && !isUnavailable && (
-        <>
-          {!showConfirm ? (
+          <p className="product-price">
+            ₹ {product.price}
+            {product.type === "rent" && <span className="pc-per-day"> / day</span>}
+          </p>
+
+          {isRented && availableAfter && (
+            <p className="pc-avail-note">Available after <strong>{availableAfter}</strong></p>
+          )}
+
+          {/* Description trigger */}
+          {product.description?.trim() && (
+            <button className="pc-desc-btn" onClick={() => setShowDescription(true)}>
+              View Description ↗
+            </button>
+          )}
+
+          {/* ── OWNER CONTROLS ── */}
+          {isOwner && product.status === "AVAILABLE" && (
+            <button className="btn-cancel pc-full-btn" onClick={handleTakeDown}>
+              Take Down Listing
+            </button>
+          )}
+
+          {/* ── BUYER ACTIONS ── */}
+          {!isOwner && !isUnavailable && (
             <>
-              <button
-                className="btn-primary"
-                onClick={() => setShowConfirm(true)}
-              >
-                Request {product.type === "buy" ? "Buy" : "Rent"}
-              </button>
+              {!showConfirm ? (
+                <div className="pc-action-group">
+                  <button className="btn-primary pc-full-btn" onClick={() => setShowConfirm(true)}>
+                    {product.type === "buy" ? "Buy Now" : "Rent Now"}
+                  </button>
 
-              {/* 🔥 WISHLIST TOGGLE */}
-              {wishlistMode ? (
-                <button
-                  className="btn-cancel"
-                  onClick={removeFromWishlist}
-                >
-                  ❌ Remove from Wishlist
-                </button>
+                  <div className="pc-secondary-row">
+                    <button className="btn-chat" onClick={openChat}>💬 Chat</button>
+                    {wishlistMode ? (
+                      <button className="btn-cancel" onClick={removeFromWishlist}>✕ Remove</button>
+                    ) : (
+                      <button className="btn-chat" onClick={addToWishlist}>♡ Save</button>
+                    )}
+                  </div>
+                </div>
               ) : (
-                <button
-                  className="btn-chat"
-                  onClick={addToWishlist}
-                >
-                  🤍 Add to Wishlist
-                </button>
-              )}
-            </>
-          ) : (
-            <>
-              {product.type === "rent" && (
-                <div className="rent-box">
-                  <label>
-                    From
-                    <input
-                      type="date"
-                      min={today}
-                      value={rentFrom}
-                      onChange={(e) => {
-                        setRentFrom(e.target.value);
-                        calculateRent(e.target.value, rentTo);
-                      }}
-                    />
-                  </label>
-
-                  <label>
-                    To
-                    <input
-                      type="date"
-                      min={minEndDate}
-                      value={rentTo}
-                      onChange={(e) => {
-                        setRentTo(e.target.value);
-                        calculateRent(rentFrom, e.target.value);
-                      }}
-                    />
-                  </label>
-
-                  {totalDays > 0 && (
-                    <p className="rent-price">
-                      ₹{product.price}/day × {totalDays} ={" "}
-                      <strong>₹{totalPrice}</strong>
-                    </p>
+                <div className="pc-confirm-panel">
+                  {product.type === "rent" && (
+                    <div className="rent-box">
+                      <label>
+                        From
+                        <input
+                          type="date"
+                          min={today}
+                          value={rentFrom}
+                          onChange={(e) => {
+                            setRentFrom(e.target.value);
+                            calculateRent(e.target.value, rentTo);
+                          }}
+                        />
+                      </label>
+                      <label>
+                        To
+                        <input
+                          type="date"
+                          min={minEndDate}
+                          value={rentTo}
+                          onChange={(e) => {
+                            setRentTo(e.target.value);
+                            calculateRent(rentFrom, e.target.value);
+                          }}
+                        />
+                      </label>
+                      {totalDays > 0 && (
+                        <p className="rent-price">
+                          ₹{product.price} × {totalDays} days = <strong>₹{totalPrice}</strong>
+                        </p>
+                      )}
+                    </div>
                   )}
+                  <div className="confirm-row">
+                    <button className="btn-cancel" onClick={() => setShowConfirm(false)}>Cancel</button>
+                    <button className="btn-confirm" onClick={confirmRequest}>Confirm</button>
+                  </div>
                 </div>
               )}
-
-              <div className="confirm-row">
-                <button
-                  className="btn-cancel"
-                  onClick={() => setShowConfirm(false)}
-                >
-                  Cancel
-                </button>
-                <button
-                  className="btn-confirm"
-                  onClick={confirmRequest}
-                >
-                  Confirm
-                </button>
-              </div>
             </>
           )}
-        </>
-      )}
 
-      {!isOwner && (
-        <button className="btn-chat" onClick={openChat}>
-          💬 Chat with Seller
-        </button>
+          {/* Chat-only for buyer after unavailable check */}
+          {!isOwner && isUnavailable && (
+            <button className="btn-chat pc-full-btn" onClick={openChat}>💬 Chat with Seller</button>
+          )}
+        </div>
+      </div>
+
+      {/* ── DESCRIPTION MODAL ── */}
+      {showDescription && (
+        <div className="desc-overlay" onClick={() => setShowDescription(false)}>
+          <div className="desc-modal" onClick={(e) => e.stopPropagation()}>
+            <button className="desc-close" onClick={() => setShowDescription(false)}>✕</button>
+            <h3>{product.title}</h3>
+            <p>{product.description}</p>
+          </div>
+        </div>
       )}
-    </div>
+    </>
   );
 };
 
