@@ -15,23 +15,29 @@ const Buy = () => {
   }, []);
 
   return (
-    <div className="dashboard">
-      <h1 className="page-title">Buy Products</h1>
-      <p className="page-subtitle">Items available for purchase</p>
+    <div className="page">
+      <div className="blob blob-1" />
+      <div className="blob blob-2" />
+      <div className="blob blob-3" />
 
-      {loading ? (
-        <p className="empty-text">Loading products...</p>
-      ) : (
-        <div className="product-grid">
-          {products.length === 0 ? (
-            <p className="empty-text">No products available</p>
-          ) : (
-            products.map((product) => (
-              <ProductCard key={product._id} product={product} />
-            ))
-          )}
-        </div>
-      )}
+      <section className="dashboard">
+        <h1 className="page-title">Buy Products</h1>
+        <p className="page-subtitle">Items available for purchase</p>
+
+        {loading ? (
+          <p className="empty-text">Loading products...</p>
+        ) : (
+          <div className="product-grid">
+            {products.length === 0 ? (
+              <p className="empty-text">No products available</p>
+            ) : (
+              products.map((product) => (
+                <ProductCard key={product._id} product={product} />
+              ))
+            )}
+          </div>
+        )}
+      </section>
     </div>
   );
 };

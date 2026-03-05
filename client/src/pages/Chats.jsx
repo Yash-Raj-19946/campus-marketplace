@@ -28,12 +28,9 @@ const Chats = () => {
 
   const getOtherUser = (chat) => {
     if (!chat?.sender || !chat?.receiver) return null;
-    return chat.sender._id === user._id
-      ? chat.receiver
-      : chat.sender;
+    return chat.sender._id === user._id ? chat.receiver : chat.sender;
   };
 
-  // 🔥 THIS FUNCTION WAS MISSING (CAUSE OF WHITE SCREEN)
   const getChatDisplayName = (chat, otherUser) => {
     if (chat.customNames && chat.customNames[user._id]) {
       return chat.customNames[user._id];
@@ -42,47 +39,49 @@ const Chats = () => {
   };
 
   return (
-    <div className="dashboard">
-      <h1 className="page-title">My Chats</h1>
+    <div className="page">
+      <div className="blob blob-1" />
+      <div className="blob blob-2" />
+      <div className="blob blob-3" />
 
-      {chats.length === 0 && (
-        <p className="empty-text">No chats yet</p>
-      )}
+      <section className="dashboard">
+        <h1 className="page-title">My Chats</h1>
+        <p className="page-subtitle">Conversations with buyers and sellers</p>
 
-      {chats.length > 0 && (
-        <div className="chat-list">
-          {chats.map((chat) => {
-            const otherUser = getOtherUser(chat);
-            if (!otherUser) return null;
+        {chats.length === 0 && <p className="empty-text">No chats yet</p>}
 
-            return (
-              <div key={chat._id} className="chat-list-item">
-                {/* Chat name */}
-                <span
-                  className="chat-name"
-                  onClick={() => navigate(`/chat/${chat._id}`)}
-                >
-                  {getChatDisplayName(chat, otherUser)}
-                </span>
+        {chats.length > 0 && (
+          <div className="chat-list">
+            {chats.map((chat) => {
+              const otherUser = getOtherUser(chat);
+              if (!otherUser) return null;
 
-                {/* 3-dot menu */}
-                <button
-                  className="chat-menu-btn"
-                  onClick={(e) => {
-                    e.stopPropagation(); // 🔥 critical
-                    setMenuChat(chat);
-                    setNewName("");
-                  }}
-                >
-                  ⋮
-                </button>
-              </div>
-            );
-          })}
-        </div>
-      )}
+              return (
+                <div key={chat._id} className="chat-list-item">
+                  <span
+                    className="chat-name"
+                    onClick={() => navigate(`/chat/${chat._id}`)}
+                  >
+                    {getChatDisplayName(chat, otherUser)}
+                  </span>
 
-      {/* Rename Modal */}
+                  <button
+                    className="chat-menu-btn"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setMenuChat(chat);
+                      setNewName("");
+                    }}
+                  >
+                    ...
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </section>
+
       {menuChat && (
         <div className="rename-modal">
           <h4>Rename Chat</h4>

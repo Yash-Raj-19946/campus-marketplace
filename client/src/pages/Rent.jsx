@@ -16,19 +16,25 @@ const Rent = () => {
   }, [search]);
 
   return (
-    <div className="dashboard">
-      <h1 className="page-title">Rent Products</h1>
-      <p className="page-subtitle">Items available for rent</p>
+    <div className="page">
+      <div className="blob blob-1" />
+      <div className="blob blob-2" />
+      <div className="blob blob-3" />
 
-      <div className="product-grid">
-        {products.length === 0 ? (
-          <p className="empty-text">No products available</p>
-        ) : (
-          products.map((p) => (
-            <ProductCard key={p._id} product={p} />
-          ))
-        )}
-      </div>
+      <section className="dashboard">
+        <h1 className="page-title">Rent Products</h1>
+        <p className="page-subtitle">Items available for rent</p>
+
+        <div className="product-grid">
+          {products.length === 0 ? (
+            <p className="empty-text">No products available</p>
+          ) : (
+            products.map((p) => (
+              <ProductCard key={p._id} product={p} />
+            ))
+          )}
+        </div>
+      </section>
     </div>
   );
 };

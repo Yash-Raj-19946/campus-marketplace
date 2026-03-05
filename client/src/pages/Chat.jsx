@@ -15,7 +15,6 @@ const Chat = () => {
 
   const bottomRef = useRef(null);
 
-  /* FORMAT TIME (10:42 AM) */
   const formatTime = (date) => {
     return new Date(date).toLocaleTimeString([], {
       hour: "2-digit",
@@ -23,7 +22,6 @@ const Chat = () => {
     });
   };
 
-  /* LOAD CHAT HEADER */
   const loadChatHeader = async () => {
     try {
       const res = await getChats();
@@ -44,7 +42,6 @@ const Chat = () => {
     }
   };
 
-  /* LOAD MESSAGES */
   const loadMessages = async () => {
     try {
       const res = await getMessages(chatId);
@@ -67,7 +64,6 @@ const Chat = () => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  /* SEND MESSAGE */
   const handleSend = async (e) => {
     e.preventDefault();
     if (!content.trim()) return;
@@ -82,51 +78,50 @@ const Chat = () => {
   };
 
   return (
-    <div className="chat-page">
-      {/* HEADER */}
-      <div className="chat-header">
-        <span>{headerName}</span>
-      </div>
+    <div className="page">
+      <div className="blob blob-1" />
+      <div className="blob blob-2" />
+      <div className="blob blob-3" />
 
-      {/* MESSAGES */}
-      <div className="chat-messages">
-        {loading ? (
-          <p className="empty-text">Loading messages…</p>
-        ) : messages.length === 0 ? (
-          <p className="empty-text">No messages yet. Say hi 👋</p>
-        ) : (
-          messages.map((msg) => {
-            const isMine = msg.sender._id === user._id;
+      <div className="chat-page">
+        <div className="chat-header">
+          <span>{headerName}</span>
+        </div>
 
-            return (
-              <div
-                key={msg._id}
-                className={`message-wrapper ${isMine ? "me" : "other"}`}
-              >
-                <div className={`chat-bubble ${isMine ? "me" : "other"}`}>
-                  {msg.content}
+        <div className="chat-messages">
+          {loading ? (
+            <p className="empty-text">Loading messages...</p>
+          ) : messages.length === 0 ? (
+            <p className="empty-text">No messages yet. Say hi.</p>
+          ) : (
+            messages.map((msg) => {
+              const isMine = msg.sender._id === user._id;
+
+              return (
+                <div
+                  key={msg._id}
+                  className={`message-wrapper ${isMine ? "me" : "other"}`}
+                >
+                  <div className={`chat-bubble ${isMine ? "me" : "other"}`}>
+                    {msg.content}
+                  </div>
+                  <div className="message-time">{formatTime(msg.createdAt)}</div>
                 </div>
+              );
+            })
+          )}
+          <div ref={bottomRef} />
+        </div>
 
-                {/* ✅ MESSAGE TIMESTAMP */}
-                <div className="message-time">
-                  {formatTime(msg.createdAt)}
-                </div>
-              </div>
-            );
-          })
-        )}
-        <div ref={bottomRef} />
+        <form className="chat-input-bar" onSubmit={handleSend}>
+          <input
+            placeholder="Type a message..."
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+          />
+          <button type="submit">Send</button>
+        </form>
       </div>
-
-      {/* INPUT */}
-      <form className="chat-input-bar" onSubmit={handleSend}>
-        <input
-          placeholder="Type a message…"
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-        />
-        <button type="submit">Send</button>
-      </form>
     </div>
   );
 };
